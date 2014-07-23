@@ -1,4 +1,6 @@
-﻿// --- just some helper functions
+﻿/// <reference path="/@JSense.js" />
+
+// --- just some helper functions
 console.log = function (str) {
     var text = document.createTextNode(str+'\n');
     var e = document.getElementById('logme');
@@ -19,9 +21,9 @@ function logtest(test, output, expected) {
 };
 
 // starting the tests now...
-console.log('--- CLASS TESTS ----');
+console.log('\n--- CLASS TESTS ----');
 
-var a = ds.class({
+var a = ds.make.class({
     type: 'a',
     constructor: function () { },
     mul: function (s) {
@@ -29,7 +31,7 @@ var a = ds.class({
         return this;
     }
 });
-var b = ds.class({
+var b = ds.make.class({
     type: 'b',
     inherits: a,
     constructor: function (x) { this.x = x; },
@@ -38,7 +40,7 @@ var b = ds.class({
         return this;
     }
 });
-var c = ds.class({
+var c = ds.make.class({
     type: 'c',
     constructor: function () { this.x = 2; },
     add: function (s) {
@@ -46,7 +48,7 @@ var c = ds.class({
         return this;
     }
 });
-var d = ds.class({
+var d = ds.make.class({
     type: 'd',
     inherits: [b, c],
     constructor: function (val) {
@@ -66,7 +68,7 @@ var dobj = new d(2);
 dobj.mul(2).sub(1).div(3).add(1);
 logtest('class test (multiple inheritance)', dobj.x, 2);
 
-var cc = ds.class({
+var cc = ds.make.class({
     type: 'c',
     inherits: b,
     constructor: function (x) { this.x = x; },
@@ -81,24 +83,24 @@ cobj.add(3).mul(2).sub(11);
 logtest('class test (multilevel inheritance)', cobj.x, 1);
 
 
-var Dog = ds.class({
+var Dog = ds.make.class({
     type: 'Dog',
     constructor: function () { },
     bark: function () { return "WOOF WOOF"; }
 });
-var Hound = ds.class({
+var Hound = ds.make.class({
     type: 'Hound',
     inherits: Dog,
     constructor: function () { },
     bark: function () { return "Howl"; }
 });
-var Puppy = ds.class({
+var Puppy = ds.make.class({
     type: 'Puppy',
     inherits: Dog,
     constructor: function () { },
     bark: function () { return "yip yip yip"; }
 });
-var BabyBasset = ds.class({
+var BabyBasset = ds.make.class({
     type: 'BabyBasset',
     inherits: [Hound, Puppy],
     constructor: function () { }
@@ -115,7 +117,7 @@ logtest('class test (hybrid inheritance)', babyBasset.bark(), 'Howl');
 
 
 
-var Vehicle = ds.class({
+var Vehicle = ds.make.class({
     type: 'Vehicle',
     constructor: function () { },
     description: function () {
@@ -123,7 +125,7 @@ var Vehicle = ds.class({
     }
 });
 
-var Truck = ds.class({
+var Truck = ds.make.class({
     type: 'Truck',
     inherits: Vehicle,
     constructor: function () { },
@@ -133,7 +135,7 @@ var Truck = ds.class({
 
 });
 
-var Car = ds.class({
+var Car = ds.make.class({
     type: 'Car',
     inherits: Vehicle,
     constructor: function () { },
@@ -168,7 +170,7 @@ try {
 
     };
 
-    var Car = ds.class({
+    var Car = ds.make.class({
         type: 'InterfaceTest',
         implements: ICar,
         constructor: function () { },
@@ -194,7 +196,7 @@ try {
     var I2 = {
         f2: function (a, b, c) { }
     };
-    var C1 = ds.class({
+    var C1 = ds.make.class({
         type: 'C1',
         implements: [I1, I2],
         constructor: function () { },
@@ -207,4 +209,116 @@ catch (e) {
 }
 logtest('class test (multiple interfaces)', expected, true);
 
+console.log('\n--- LIST TESTS ----');
+
+var list = new ds.data.list(1, 2, 3);
+
+logtest('new list()', list.toArray().join(), '1,2,3');
+
+list.empty();
+logtest('list.empty()', list.count, 0);
+
+list.add(1);
+list.add(2);
+list.add(3);
+logtest('list.add()', list.toArray().join(), '1,2,3');
+
+logtest('list.at()', list.at(1), 2);
+logtest('list.first()', list.first(), 1);
+logtest('list.last()', list.last(), 3);
+
+list.removeAt(1);
+logtest('list.removeAt()', list.toArray().join(), '1,3');
+
+list.remove(3);
+logtest('list.remove()', list.toArray().join(), '1');
+
+list.add(3);
+list.addAt(2, 1);
+//logtest('list.addAt()', list.toArray().join(), '1,2,3');
+
+list.addAt(0, 0);
+//logtest('list.addAt()', list.toArray().join(), '0,1,2,3');
+
+list.addAt(4, 4);
+logtest('list.addAt()', list.toArray().join(), '0,1,2,3,4');
+
+list.removeAt(4);
+//logtest('list.removeAt()', list.toArray().join(), '0,1,2,3');
+
+list.removeAt(0);
+//logtest('list.removeAt()', list.toArray().join(), '1,2,3');
+
+list.removeFirst();
+logtest('list.removeFirst()', list.toArray().join(), '2,3');
+
+list.removeLast();
+logtest('list.removeLast()', list.toArray().join(), '2');
+
+list = new ds.data.list(1, 2, 3, 4, 5);
+logtest('list.indexOf()', list.indexOf(3), 2);
+
+
+
+console.log('\n--- DICTIONARY TESTS ----');
+
+var dict = new ds.data.dictionary({
+    one: 1,
+    two: 2,
+    three: 3
+});
+
+logtest('new dictionary()', dict.toArray().join(), '1,2,3');
+
+dict.empty();
+logtest('dictionary.empty()', dict.count, 0);
+
+dict.add(1, 3);
+dict.add(2, 2);
+dict.add(3, 1);
+logtest('dictionary.add()', dict.toArray().join(), '3,2,1');
+
+logtest('dictionary.at()', dict.at(1), 3);
+
+dict.removeAt(1);
+logtest('dictionary.removeAt()', dict.toArray().join(), '2,1');
+
+dict.remove(1);
+logtest('dictionary.remove()', dict.toArray().join(), '2');
+
+dict.add('key', 'new');
+logtest('dictionary.keys()', dict.keys().join(), '2,key');
+
+
+console.log('\n--- STACK TESTS ----');
+
+var stack = new ds.data.stack(1, 2, 3);
+logtest('new stack()', stack.toArray().join(), '1,2,3');
+
+stack.push(4);
+logtest('stack.push()', stack.toArray().join(), '1,2,3,4');
+
+logtest('stack.pop()', stack.pop(), 4);
+
+var peek = stack.peek();
+logtest('stack.peek()', peek, 3);
+
+stack.empty();
+logtest('stack.empty()', stack.count, 0);
+
+console.log('\n--- QUEUE TESTS ----');
+
+var queue = new ds.data.queue(1, 2, 3);
+logtest('new queue()', queue.toArray().join(), '1,2,3');
+
+queue.enqueue(4);
+logtest('queue.enqueue()', queue.toArray().join(), '1,2,3,4');
+
+logtest('queue.dequeue()', queue.dequeue(), 1);
+
+var peek = queue.peek();
+logtest('queue.peek()', peek, 2);
+
+queue.empty();
+logtest('queue.empty()', queue.count, 0);
 

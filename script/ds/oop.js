@@ -4,6 +4,7 @@ if (!ds) ds = {};
 if (!ds.array) ds.array ={};
 if (!ds.object) ds.object ={};
 if (!ds.data) ds.data ={};
+if (!ds.make) ds.make = {};
 
 ds.str = {
     funct: 'function',
@@ -35,6 +36,7 @@ ds.object.get_methods = function (obj) {
     }
     return result;
 };
+
 ds.object.get_method_signatures= function (obj) {
     var result = [];
     for (var id in obj) {
@@ -82,7 +84,7 @@ ds.data.copy= function (src, dest, ignore, addonly) {
     return dest;
 };
 
-ds.class = function (details) {
+ds.make.class = function (details) {
     /// <summary>
     /// Used to create a class object with a ds.constructor.
     /// </summary>
@@ -90,7 +92,7 @@ ds.class = function (details) {
     /// <returns type="">(CLASS) the class</returns>
     if (!details.type) throw ds.str.typeRequired;
 
-    var inherit= function(ptype) {
+    var inherit = function (ptype) {
         var basetype = ptype.type;
         ds.data.copy(ptype, details, [ds.str.type, ds.str.constructor], true);
         return basetype;
@@ -98,17 +100,23 @@ ds.class = function (details) {
 
     // inherits?
     if (details.inherits) {
-        // support multiple inheritance with array
-        var basetype;
-        if (details.inherits instanceof Array) {
-            basetype = [];
-            for (var x = 0; x < details.inherits.length; x++)
-                basetype.push(inherit(details.inherits[x].prototype));
-        }
-        else
-            basetype = inherit(details.inherits.prototype);
+        try {
+            // support multiple inheritance with array
+            var basetype;
+            if (details.inherits instanceof Array) {
+                basetype = [];
+                for (var x = 0; x < details.inherits.length; x++)
+                    basetype.push(inherit(details.inherits[x].prototype));
+            }
+            else
+                basetype = inherit(details.inherits.prototype);
 
-        details.inherits = basetype;
+            details.inherits = basetype;
+        }
+        catch (e) {
+            throw "ERROR: Unable to inherit classes in " + details.type + 
+                ". Make sure your have created the class with ds.make.class() before attempting to inherit it!";
+        }
     }
 
     // implements?
@@ -135,7 +143,7 @@ ds.class = function (details) {
     return details.constructor;
 };
 
-ds.enum = function (object) {
+ds.make.enum = function (object) {
     /// <summary>
     /// Used to create an enum object.
     /// The resulting object can be used as both an enumerator and a lookup table
