@@ -2,11 +2,8 @@ name:	ds.oop
 date:	7/22/2014	
 author: digital.synapse.software@gmail.com
 
- Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces (code contracts), and enumerators 
-
-Creating reusable code is a constant struggle in any language but can be particularly difficult in javascript because many of the language features
-needed to build and maintain reusable code are simply not available. ds.oop attempts to solve this by making it easy to implement several core oop concepts
-such as classes, inheritance, and code contracts.
+ Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, 
+interfaces (code contracts), and enumerators 
 
 Creating a class is simple. Here is the minimal requirements to define a class:
 
@@ -15,20 +12,18 @@ Creating a class is simple. Here is the minimal requirements to define a class:
 	    constructor: function () { }
 	});
 
-
-The constructor function prepares the object when it is created.
-The constructor function must be name 'constructor'. 
-To instantiate the class you need to use the new keyword...
+Thats it. just a constructor function and a type string.
+To create class member variables just use the this keyword inside of a class function.
 
 	var Color = ds.class({
 	    type: 'Color',
 	    constructor: function (r,g,b) { 
-		this.r = r;
-		this.g = g;
-		this.b = b;
+		this.r = r;                     /* now r,g, and b are available to    */
+		this.g = g;                     /* other functions in the Color class */
+		this.b = b;                     
 	    }
 	});
-	var red = new Color(255,0,0);
+	var red = new Color(255,0,0);   // using the new keyword to instantiate the class
 
 One of the best ways to create reusable code is to use class inheritance.
 A class can inherit the methods from any other classes you create.
@@ -44,13 +39,13 @@ The is acheived by using the 'inherits' property:
 	});
 	var b = ds.class({
 	    type: 'b',
-	    inherits: a,
+	    inherits: a,              
 	    constructor: function (x) { this.x = x; },
 	    sub: function (s) {
 	        this.x -= s;
 	        return this;
 	    }
-	});
+	}); 
 
 ds.oop supports single, multiple, multilevel, hybrid, and hierarchical inheritance.
 You can also use code contracts using the 'implements' property...
