@@ -5,6 +5,12 @@ author: digital.synapse.software@gmail.com
  Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, 
 interfaces (code contracts), and enumerators 
 
+Note: 
+ds.min.js     - the expanded framework. everything in the project.
+ds.oop.min.js - just class creation. the minimal framework 
+
+--- Getting Started ---
+
 Creating a class is simple. Here is the minimal requirements to define a class:
 
 	var MyClass = ds.class({
