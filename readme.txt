@@ -76,4 +76,4 @@ Hopefully you are starting to see how ds.oop can help you write javascript code 
 
 If you like this project send me an email:
 
-digital.synapse.software [ಠ_ಠ]  gmail.com
+digital.synapse.software [ಠ_ಠ] gmail.com
