@@ -1,6 +1,6 @@
 ﻿name:	ds.oop		
 date:	7/22/2014	
-author: digital.synapse.software@gmail.com
+author: digital-synapse
 
  Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces (code contracts), and enumerators 
 
