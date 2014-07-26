@@ -1,6 +1,7 @@
 ﻿/// <reference path="/@JSense.js" />
 
 // --- just some helper functions
+var console = {};
 console.log = function (str) {
     var text = document.createTextNode(str+'\n');
     var e = document.getElementById('logme');
@@ -14,9 +15,9 @@ var strinsert= function (output, index, string) {
 };
 function logtest(test, output, expected) {
     var log = test + ':                                                                            ';
-    log = strinsert(log,40, output);
-    if (output === expected) log = strinsert(log,80, '...ok');
-    else log = strinsert(log,80, '...fail')
+    //log = strinsert(log,40, output);
+    if (output === expected) log = strinsert(log,40, 'ok');
+    else log = strinsert(log,40, 'fail')
     console.log(log.trim());
 };
 
@@ -116,7 +117,6 @@ var babyBasset = new BabyBasset();
 logtest('class test (hybrid inheritance)', babyBasset.bark(), 'Howl');
 
 
-
 var Vehicle = ds.make.class({
     type: 'Vehicle',
     constructor: function () { },
@@ -208,6 +208,7 @@ catch (e) {
     expected = false;
 }
 logtest('class test (multiple interfaces)', expected, true);
+
 
 console.log('\n--- LIST TESTS ----');
 

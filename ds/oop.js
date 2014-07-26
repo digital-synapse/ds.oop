@@ -1,25 +1,24 @@
 ﻿/// <reference path="/@JSense.js" />
-var ds; 
-if (!ds) ds = {};
-if (!ds.array) ds.array ={};
-if (!ds.object) ds.object ={};
-if (!ds.data) ds.data ={};
-if (!ds.make) ds.make = {};
+var ds = ds || {};
+ds.array = ds.array || {};
+ds.object = ds.object || {};
+ds.data = ds.data || {};
+ds.make = ds.make || {};
 
 ds.str = {
     funct: 'function',
     typeRequired: 'The type property is required',
     type: 'type',
     constructor: 'constructor',
-    basetype: 'basetype',
+    implementstype: 'implementstype',
     sigNotImplementedIn: 'Signature(s) not implemented in ',
     colon: ':',
     colonspace: ': ',
     newline: '\n'
 };
 
-ds.safe = function(callback){
-    try{
+ds.safe = function (callback) {
+    try {
         callback();
     } catch (e) { // do nothing
     }
@@ -28,33 +27,33 @@ ds.safe = function(callback){
 ds.object.get_methods = function (obj) {
     var result = [];
     for (var id in obj) {
-        ds.safe(function(){
+        //ds.safe(function (){
             if (typeof (obj[id]) == ds.str.funct) {
-                result[id]=(id + ds.str.colonspace + obj[id].toString());
+                result[id] = (id + ds.str.colonspace + obj[id].toString());
             }
-        });
+        //});
     }
     return result;
 };
 
-ds.object.get_method_signatures= function (obj) {
+ds.object.get_method_signatures = function (obj) {
     var result = [];
     for (var id in obj) {
-        ds.safe(function(){
+        //ds.safe(function () {
             if (typeof (obj[id]) == ds.str.funct) {
                 result.push(id + ds.str.colonspace + obj[id].length);
             }
-        });
+        //});
     }
     return result;
 };
 
 // the difference (everything in a1 not in a2) sorry ie8-
-ds.array.diff= function (a1, a2) {
+ds.array.diff = function (a1, a2) {
     return a1.filter(function (i) { return a2.indexOf(i) < 0; });
 };
 
-ds.data.copy= function (src, dest, ignore, addonly) {
+ds.data.copy = function (src, dest, ignore, addonly) {
     /// <summary>
     /// Used to deep clone an object or array
     /// </summary>
@@ -63,15 +62,15 @@ ds.data.copy= function (src, dest, ignore, addonly) {
     /// <param name="ignore">(Array) - a blacklist of property names/indexes that will not be copied</param>
     /// <param name="addonly">(Bool) - will copy properties/indexes that do not exist in dest</param>
     /// <returns type=""></returns>
-    if (addonly == undefined) addonly = true;
-    if (dest == undefined) dest = src instanceof Array ? [] : {};
+    if (!addonly) addonly = true;
+    if (!dest) dest = src instanceof Array ? [] : {};
     for (var attr in src) {
         var docopy = true;
-        if (ignore != undefined) {
+        if (ignore) {
             if (ignore.indexOf(attr) != -1) docopy = false;
         }
         if (docopy) {
-            if ((addonly && dest[attr] == undefined) || !addonly){
+            if ((addonly && !dest[attr]) || !addonly) {
                 if (typeof src[attr] == ds.str.funct)
                     dest[attr] = src[attr];
                 else if (src[attr] == src)
@@ -93,28 +92,28 @@ ds.make.class = function (details) {
     if (!details.type) throw ds.str.typeRequired;
 
     var inherit = function (ptype) {
-        var basetype = ptype.type;
+        var implementstype = ptype.type;
         ds.data.copy(ptype, details, [ds.str.type, ds.str.constructor], true);
-        return basetype;
+        return implementstype;
     };
 
     // inherits?
     if (details.inherits) {
         try {
             // support multiple inheritance with array
-            var basetype;
+            var implementstype;
             if (details.inherits instanceof Array) {
-                basetype = [];
+                implementstype = [];
                 for (var x = 0; x < details.inherits.length; x++)
-                    basetype.push(inherit(details.inherits[x].prototype));
+                    implementstype.push(inherit(details.inherits[x].prototype));
             }
             else
-                basetype = inherit(details.inherits.prototype);
+                implementstype = inherit(details.inherits.prototype);
 
-            details.inherits = basetype;
+            details.inherits = implementstype;
         }
         catch (e) {
-            throw "ERROR: Unable to inherit classes in " + details.type + 
+            throw "ERROR: Unable to inherit classes in " + details.type +
                 ". Make sure your have created the class with ds.make.class() before attempting to inherit it!";
         }
     }

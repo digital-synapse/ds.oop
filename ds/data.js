@@ -1,7 +1,7 @@
 ﻿/// <reference path="/@JSense.js" />
-var ds;if(!ds)ds={};
-if (!ds.interfaces) ds.interfaces = {};
-if (!ds.data) ds.data = {};
+var ds = ds || {};
+ds.interfaces = ds.interfaces || {};
+ds.data = ds.data || {};
 
 ds.interfaces.enumerable = {
     toArray: function() {},
@@ -35,52 +35,52 @@ ds.data.dictionary = ds.make.class({
     type: 'Dictionary',
     implements: [ds.interfaces.enumerable, ds.interfaces.collection],
     inherits: ds.data.enumerable,
-    constructor: function ( object ) {
-        this.empty()
+    constructor: function (object) {
+        this.empty();
 
-        if (object) {            
+        if (object) {
             var keys = Object.keys(object);
-            for (var i=0; i<keys.length; i++){
-                var key=keys[i];
-                var value = object[key]; 
-                this.add(key,value);
-            }            
-        }        
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var value = object[key];
+                this.add(key, value);
+            }
+        }
     },
     empty: function () {
         this.count = 0;
         this.collection = {};
     },
-    add: function(key, item) {
-        this.collection[key]=item;
+    add: function (key, item) {
+        this.collection[key] = item;
         return ++this.count;
     },
-    at: function(key) {     
+    at: function (key) {
         return this.collection[key];
     },
-    removeAt: function(key) {
-        if(this.collection[key]==undefined)
-                       return undefined;
+    removeAt: function (key) {
+        if (!this.collection[key])
+            return undefined;
         delete this.collection[key]
-        return --this.count    
+        return --this.count
     },
-    iterate: function(callback){
+    iterate: function (callback) {
         var keys = this.keys();
-        for (var i=0; i<keys.length; i++){
-            var key=keys[i];
-            var value = callback(this.collection[key],key); 
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var value = callback(this.collection[key], key);
             if (value) return value;
         }
     },
-    keys: function() {
+    keys: function () {
         return Object.keys(this.collection);
     },
-    remove: function(item){
+    remove: function (item) {
         var keys = this.keys();
-        for (var i=0; i<keys.length; i++){
-            var key=keys[i];
-            var value = this.collection[key]; 
-            if (ds.object.isEqual(value,item)){
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var value = this.collection[key];
+            if (ds.object.isEqual(value, item)) {
                 return this.removeAt(key);
             }
         }
@@ -108,7 +108,7 @@ ds.data.list= ds.make.class({
             if (this.count > 0) {
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (callback(node.data, i)) break;
                     i++;
                     node = node.nextnode;
@@ -127,14 +127,14 @@ ds.data.list= ds.make.class({
         // adds a new item to the end of the list
         add: function (data) {
             var node = {};
-            if (this.lastnode != null)
+            if (this.lastnode)
                 this.lastnode.nextnode = node;
 
             node.prevnode = this.lastnode;
             node.nextnode = null;
             node.data = data;
 
-            if (this.firstnode == null)
+            if (!this.firstnode)
                 this.firstnode = node;
 
             this.lastnode = node;
@@ -150,10 +150,10 @@ ds.data.list= ds.make.class({
                 }
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (i == index) {
                         var nextnode = node;
-                        var node = { data: data };
+                        node = { data: data };
                         node.nextnode = nextnode;
                         node.prevnode = nextnode.prevnode;
                         if (node.prevnode)
@@ -176,7 +176,7 @@ ds.data.list= ds.make.class({
             if (index >= 0 && index < this.count) {
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (i == index) return node.data;
                     i++;
                     node = node.nextnode;
@@ -216,7 +216,7 @@ ds.data.list= ds.make.class({
             if (index >= 0 && index < this.count) {
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (i == index) {
                         if (node.prevnode)
                             node.prevnode.nextnode = node.nextnode;
@@ -240,7 +240,7 @@ ds.data.list= ds.make.class({
             if (this.count > 0) {
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (ds.object.isEqual(node.data, item)) {
                         if (node.prevnode)
                             node.prevnode.nextnode = node.nextnode;
@@ -265,7 +265,7 @@ ds.data.list= ds.make.class({
             if (this.count > 0) {
                 var node = this.firstnode;
                 var i = 0;
-                while (node != null) {
+                while (node) {
                     if (ds.object.isEqual(node.data, item)) {
                         return i;
                     }
@@ -323,3 +323,4 @@ ds.data.queue= ds.make.class({
         return node;
     }
 });
+
