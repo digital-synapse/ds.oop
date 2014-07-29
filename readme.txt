@@ -14,14 +14,14 @@ If you like this project send me an email:
 To get started include ds.oop.min.js
 Creating a class is simple. Here are the minimal requirements to define a class:
 
-	var MyClass = ds.class({
+	var MyClass = ds.make.class({
 	    type: 'MyClass',              /* The type name - always required */
 	    constructor: function () { }  /* The constructor - always required */
 	});
 
 Thats it. just a constructor function and a type string. To create class member variables just use the this *  keyword inside of a class function.
 
-	var Color = ds.class({
+	var Color = ds.make.class({
 	    type: 'Color',
 	    constructor: function (r,g,b) { 
 		this.r = r;                     /* now r,g, and b are available to   */
@@ -33,7 +33,7 @@ Thats it. just a constructor function and a type string. To create class member 
 
 One of the best ways to create reusable code is to use class inheritance. A class can inherit the methods *  from any other classes you create. The is achieved by using the 'inherits' property which accepts a class *  object or array of class objects as a parameter:
 
-	var a= ds.class({
+	var a= ds.make.class({
 	    type: 'a',
 	    constructor: function (x) { this.val = x; },
 	    mul: function (s) {
@@ -41,7 +41,7 @@ One of the best ways to create reusable code is to use class inheritance. A clas
 	        return this;
 	    }
 	});
-	var b= ds.class({
+	var b= ds.make.class({
 	    type: 'b',
 	    inherits: a,              
 	    constructor: function (x) { this.val = x; },
@@ -59,7 +59,7 @@ You can also use code contracts using the 'implements' property...
 	var IThing= {
 		dothing: function(thing) {}  /* this is an interface signature */
 	};
-	var Thing = ds.class({
+	var Thing = ds.make.class({
 	    type: 'Thing',
 	    implements: IThing,
 	    constructor: function(){},
@@ -70,10 +70,10 @@ You can also use code contracts using the 'implements' property...
 
 ds.oop will throw an error to let you know if your class does not implement all of the signatures in the contract. It will even tell you exactly which signatures are missing. Multiple inheritance and multiple interfaces are allowed on any class. As a general rule whenever there is an conflict with multiple inheritance or multiple interfaces, ds.oop gives priority to the left most class in the list.
 
-	var Thing = ds.class({
+	var Thing = ds.make.class({
 	    type: 'Thing',
-	    inherits: [Class1,Class2,Class3]
-	    implements: [Interface1,Interface2,Interface3]
+	    inherits: [Class1,Class2,Class3],
+	    implements: [Interface1,Interface2,Interface3],
 	    constructor: function(){},
 	    // ...
 	};
