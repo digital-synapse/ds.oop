@@ -1,19 +1,23 @@
-﻿name:	ds.oop		
+﻿name:	ds.oop.min.js		
 date:	7/22/2014	
 author: digital-synapse
 
- Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces (code contracts), and enumerators 
+ A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Also very small at only 2.02 kb for the minified version. (compare that to prototypejs minified 93.38 kb)
 
---- Getting Started -----------------------------------------------------------------
-To get started include ds.oop.min.js or ds.oop.js
+If you like this project send me an email:
+  -> digital.synapse.software [ಠ_ಠ] gmail.com
+
+--- Getting Started ---------------------------------------------------------------
+
+To get started include ds.oop.min.js
 Creating a class is simple. Here are the minimal requirements to define a class:
 
 	var MyClass = ds.class({
-	    type: 'MyClass',              /* The type name */
-	    constructor: function () { }  /* The constructor */
+	    type: 'MyClass',              /* The type name - always required */
+	    constructor: function () { }  /* The constructor - always required */
 	});
 
-Thats it. just a constructor function and a type string. To create class member variables just use the this keyword inside of a class function.
+Thats it. just a constructor function and a type string. To create class member variables just use the this *  keyword inside of a class function.
 
 	var Color = ds.class({
 	    type: 'Color',
@@ -25,7 +29,7 @@ Thats it. just a constructor function and a type string. To create class member 
 	});
 	var red = new Color(255,0,0);   // using the new keyword to instantiate the class
 
-One of the best ways to create reusable code is to use class inheritance. A class can inherit the methods from any other classes you create. The is achieved by using the 'inherits' property which accepts a class object or array of class objects as a parameter:
+One of the best ways to create reusable code is to use class inheritance. A class can inherit the methods *  from any other classes you create. The is achieved by using the 'inherits' property which accepts a class *  object or array of class objects as a parameter:
 
 	var a= ds.class({
 	    type: 'a',
@@ -74,6 +78,11 @@ ds.oop will throw an error to let you know if your class does not implement all 
 
 Hopefully you are starting to see how ds.oop can help you write javascript code smarter and faster. For some more examples see classtest.js in the /test folder.
 
-If you like this project send me an email:
+--- Notes -----------------------------------------------------------------
 
-digital.synapse.software [ಠ_ಠ] gmail.com
+* ds.oop uses future reserved keywords *intentionally* to make the purpose of the code more intuitive and easier to read. The future reserved keywords being used are 'enum', 'implements', and 'class'. Feel free to do a find and replace in ds.oop.min.js if you would prefer to use substitutes for these.
+
+* ds.min.js is the full ds library. It includes several collection classes such as List, Queue, Stack, Dictionary, and Tree as well as some other helper functions and basic polyfills. If you just want the OOP framework use ds.oop.min.js instead. 
+
+If you like this project send me an email:
+  -> digital.synapse.software [ಠ_ಠ] gmail.com
