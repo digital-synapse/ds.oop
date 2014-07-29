@@ -5,7 +5,9 @@ author: digital-synapse
  A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Also very small at only 2.02 kb for the minified version. (compare that to prototypejs minified 93.38 kb)
 
 If you like this project send me an email:
-  -> digital.synapse.software [ಠ_ಠ] gmail.com
+
+    digital.synapse.software [ಠ_ಠ] gmail.com
+
 
 --- Getting Started ---------------------------------------------------------------
 
@@ -84,5 +86,6 @@ Hopefully you are starting to see how ds.oop can help you write javascript code 
 
 * ds.min.js is the full ds library. It includes several collection classes such as List, Queue, Stack, Dictionary, and Tree as well as some other helper functions and basic polyfills. If you just want the OOP framework use ds.oop.min.js instead. 
 
-If you like this project send me an email:
-  -> digital.synapse.software [ಠ_ಠ] gmail.com
+If you like this project feel free to send me an email:
+
+    digital.synapse.software [ಠ_ಠ] gmail.com
