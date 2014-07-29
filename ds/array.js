@@ -21,3 +21,35 @@ ds.array.diffs = function (a1, a2) {
     }
     return diff;
 };
+
+ds.array.where = function (array, callback) {
+    var output = [], i = 0, n;
+    for (n = 0; n < array.length; n++) {
+        if (callback(array[n])) {
+            output[i++] = array[n];
+        }
+    }
+    return output;
+};
+
+ds.array.select = function (array) {
+    var output = [], i = 0, n, k;
+    if (arguments.length == 2) {
+        var key = arguments[1];
+        for (n = 0; n < array.length; n++) {
+            output[n] = array[n][key];
+        }
+    }
+    else {
+        for (n = 0; n < array.length; n++) {
+            var item = array[n];
+            var newitem = {};
+            for (k = 1; k < arguments.length; k++) {
+                var key = arguments[k];
+                newitem[key] = item[key]
+            }
+            output[i++] = newitem;
+        }
+    }
+    return output;
+};

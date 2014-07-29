@@ -4,8 +4,9 @@ ds.interfaces = ds.interfaces || {};
 ds.data = ds.data || {};
 
 ds.interfaces.enumerable = {
-    toArray: function() {},
-    iterate: function (callback) { }
+    toArray: function () { },
+    iterate: function (callback) { },
+    count: function () { }
 };
 
 ds.interfaces.collection = {
@@ -28,6 +29,9 @@ ds.data.enumerable = ds.make.class({
             data.push(item);
         });
         return data;
+    },
+    count: function() {
+        return this.length;
     }
 });
 
@@ -48,12 +52,12 @@ ds.data.dictionary = ds.make.class({
         }
     },
     empty: function () {
-        this.count = 0;
+        this.length = 0;
         this.collection = {};
-    },
+    },    
     add: function (key, item) {
         this.collection[key] = item;
-        return ++this.count;
+        return ++this.length;
     },
     at: function (key) {
         return this.collection[key];
@@ -62,7 +66,7 @@ ds.data.dictionary = ds.make.class({
         if (!this.collection[key])
             return undefined;
         delete this.collection[key]
-        return --this.count
+        return --this.length
     },
     iterate: function (callback) {
         var keys = this.keys();
@@ -98,14 +102,14 @@ ds.data.list= ds.make.class({
         },
 
         empty: function () {
-            this.count = 0;
+            this.length = 0;
             this.firstnode = null;
             this.lastnode = null;
         },
 
         // easy way to iterate the collection - bool callback(data, index)
         iterate: function (callback) {
-            if (this.count > 0) {
+            if (this.length > 0) {
                 var node = this.firstnode;
                 var i = 0;
                 while (node) {
@@ -138,13 +142,13 @@ ds.data.list= ds.make.class({
                 this.firstnode = node;
 
             this.lastnode = node;
-            this.count++;
+            this.length++;
         },
 
         addAt: function (data, index) {
             if (index >= 0) {
 
-                if (index >= this.count) {
+                if (index >= this.length) {
                     this.add(data);
                     return;
                 }
@@ -161,7 +165,7 @@ ds.data.list= ds.make.class({
                         else
                             this.firstnode = node;
                         nextnode.prevnode = node;
-                        this.count++;
+                        this.length++;
                         return;
                     }
                     i++;
@@ -173,7 +177,7 @@ ds.data.list= ds.make.class({
 
         // returns an item at the given index
         at: function (index) {
-            if (index >= 0 && index < this.count) {
+            if (index >= 0 && index < this.length) {
                 var node = this.firstnode;
                 var i = 0;
                 while (node) {
@@ -213,7 +217,7 @@ ds.data.list= ds.make.class({
 
         // removes an item at the given index
         removeAt: function (index) {
-            if (index >= 0 && index < this.count) {
+            if (index >= 0 && index < this.length) {
                 var node = this.firstnode;
                 var i = 0;
                 while (node) {
@@ -226,7 +230,7 @@ ds.data.list= ds.make.class({
                             node.nextnode.prevnode = node.prevnode;
                         else
                             this.removeLast();
-                        this.count--;
+                        this.length--;
                         return;
                     }
                     i++;
@@ -237,7 +241,7 @@ ds.data.list= ds.make.class({
 
         // removes an item, returns false if the item was not found
         remove: function (item) {
-            if (this.count > 0) {
+            if (this.length > 0) {
                 var node = this.firstnode;
                 var i = 0;
                 while (node) {
@@ -250,7 +254,7 @@ ds.data.list= ds.make.class({
                             node.nextnode.prevnode = node.prevnode;
                         else
                             this.removeLast();
-                        this.count--;
+                        this.length--;
                         return i;
                     }
                     i++;
@@ -262,7 +266,7 @@ ds.data.list= ds.make.class({
 
         // returns an items index in the collection
         indexOf: function (item) {
-            if (this.count > 0) {
+            if (this.length > 0) {
                 var node = this.firstnode;
                 var i = 0;
                 while (node) {
@@ -324,3 +328,44 @@ ds.data.queue= ds.make.class({
     }
 });
 
+/// class tree : used to create a complete tree from a hierarcical object
+/// adds parents to all nodes and an array of leaf nodes for easy reverse traversal
+/// also works directly with forx (note: forx does not require tree objects since forx works with any object type)
+ds.data.tree = ds.make.class({
+    type: 'Tree',
+    implements: ds.interfaces.enumerable,
+    inherits: ds.data.enumerable,
+    constructor: function (object) {
+        this.root = object;
+        this.leaf = [];
+        var length = 0;
+        var leaf = this.leaf;
+        ds.forx(object, function (obj, lvl, parent, isLeaf) {
+            obj.parent = parent;
+            obj.isLeaf = isLeaf;
+            if (isLeaf) leaf.push(obj);
+            length++;
+        }, false);
+        this.length = length;
+
+        // find an array so we know the name of the child        
+        var keys = Object.keys(this.root);
+        for (var i = 0; i < keys.length; i++) {
+            ds.type
+            if (ds.isArray(this.root[keys[i]])) {
+                this.recurseOn = keys[i];
+                break;
+            }
+        }
+    },
+    toArray: function () {
+        var array = [];
+        ds.forx(this.root, function (obj) {
+            array.push(obj);
+        }, this.recurseOn);
+        return array;
+    },
+    iterate: function (callback) {
+        ds.forx(this.root, callback, this.recurseOn);
+    }
+});

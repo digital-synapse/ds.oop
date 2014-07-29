@@ -17,7 +17,7 @@ function logtest(test, output, expected) {
     var log = test + ':                                                                            ';
     //log = strinsert(log,40, output);
     if (output === expected) log = strinsert(log,40, 'ok');
-    else log = strinsert(log,40, 'fail')
+    else log = strinsert(log,40, 'fail...  '+output)
     console.log(log.trim());
 };
 
@@ -217,7 +217,7 @@ var list = new ds.data.list(1, 2, 3);
 logtest('new list()', list.toArray().join(), '1,2,3');
 
 list.empty();
-logtest('list.empty()', list.count, 0);
+logtest('list.empty()', list.count(), 0);
 
 list.add(1);
 list.add(2);
@@ -272,7 +272,7 @@ var dict = new ds.data.dictionary({
 logtest('new dictionary()', dict.toArray().join(), '1,2,3');
 
 dict.empty();
-logtest('dictionary.empty()', dict.count, 0);
+logtest('dictionary.empty()', dict.count(), 0);
 
 dict.add(1, 3);
 dict.add(2, 2);
@@ -305,7 +305,7 @@ var peek = stack.peek();
 logtest('stack.peek()', peek, 3);
 
 stack.empty();
-logtest('stack.empty()', stack.count, 0);
+logtest('stack.empty()', stack.count(), 0);
 
 console.log('\n--- QUEUE TESTS ----');
 
@@ -321,5 +321,36 @@ var peek = queue.peek();
 logtest('queue.peek()', peek, 2);
 
 queue.empty();
-logtest('queue.empty()', queue.count, 0);
+logtest('queue.empty()', queue.count(), 0);
 
+
+console.log('\n--- TREE TESTS ----');
+
+var tree = new ds.data.tree({
+    name: 'root',
+    children: [{
+        name: 'child1',
+        children: [{
+            name: 'leaf1'
+        }]
+    }, {
+        name: 'child2',
+        children: [{
+            name: 'leaf2'
+        }]
+    }, {
+        name: 'child3',
+        children: [{
+            name: 'leaf3'
+        }]
+    }]
+});
+
+logtest('new tree()', tree.root && tree.leaf && tree.count() > 0, true);
+
+var count = tree.count();
+logtest('tree.count()', count, 7);
+
+
+var names = ds.array.select(tree.toArray(), 'name').join();
+logtest('tree.toArray()', names, "leaf1,child1,leaf2,child2,leaf3,child3,root");
