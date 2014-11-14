@@ -78,6 +78,18 @@ ds.oop will throw an error to let you know if your class does not implement all 
 	    // ...
 	};
 
+Want to organize your classes? Use namespaces!
+
+	ds.make.class({
+	    type: 'Game.World.Entity',               /* added to global scope automatically */
+            constructor: function( entityId ) {
+                this.entityId = entityId;
+            }
+        });
+        var entity = new Game.World.Entity('paul');
+        console.log(entity.entityId);                /* output: paul */
+
+
 Hopefully you are starting to see how ds.oop can help you write javascript code smarter and faster. For some more examples see classtest.js in the /test folder.
 
 --- Notes -----------------------------------------------------------------
