@@ -1,5 +1,5 @@
 ﻿name:	ds.oop.min.js		
-date:	7/22/2014	
+date:	11/13/2014	
 author: digital-synapse
 
  A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Also very small at only 2.02 kb for the minified version. (compare that to prototypejs minified 93.38 kb)
@@ -78,10 +78,10 @@ ds.oop will throw an error to let you know if your class does not implement all 
 	    // ...
 	};
 
-Want to organize your classes? Use namespaces!
+Want to organize your classes? Use namespaces! since make.class will automatically create/update a namespace from your type, you don't need to explicitly assign the return value. Just use the created namespace.
 
 	ds.make.class({
-	    type: 'Game.World.Entity',               /* added to global scope automatically */
+	    type: 'Game.World.Entity',           /* added to global scope */
             constructor: function( entityId ) {
                 this.entityId = entityId;
             }
