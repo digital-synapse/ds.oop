@@ -5,8 +5,8 @@ ds.data = ds.data || {};
 
 ds.interfaces.enumerable = {
     toArray: function () { },
-    iterate: function (callback) { },
-    count: function () { }
+    iterate: function (callback) { }/*,
+    count: function () { }*/
 };
 
 ds.interfaces.collection = {
@@ -22,17 +22,23 @@ ds.interfaces.queue = {
 
 ds.data.enumerable = ds.make.class({
     type: 'Enumerable',
-    constructor: function(){},
+    constructor: function () {
+    },
+    enumerable: function () {
+        this.__defineGetter__("count", function () {
+            return this.length;
+        });
+    },
     toArray: function () {
         var data = [];
         this.iterate(function (item) {
             data.push(item);
         });
         return data;
-    },
-    count: function() {
+    }/*,
+    count: function () {        
         return this.length;
-    }
+    }*/
 });
 
 ds.data.dictionary = ds.make.class({
@@ -40,6 +46,7 @@ ds.data.dictionary = ds.make.class({
     implements: [ds.interfaces.enumerable, ds.interfaces.collection],
     inherits: ds.data.enumerable,
     constructor: function (object) {
+        this.enumerable();
         this.empty();
 
         if (object) {
@@ -92,192 +99,201 @@ ds.data.dictionary = ds.make.class({
 });
 
 // class list: used to create a doubly linked list
-ds.data.list= ds.make.class({
-        type: 'List',
-        implements: [ds.interfaces.enumerable, ds.interfaces.collection],
-        inherits: ds.data.enumerable,
-        constructor: function () {
-            this.empty();
-            this.addMany.apply(this,arguments); // pass *arguments* through to addmany funciton
-        },
+ds.data.list = ds.make.class({
+    type: 'List',
+    implements: [ds.interfaces.enumerable, ds.interfaces.collection],
+    inherits: ds.data.enumerable,
+    constructor: function () {
+        this.enumerable();
+        this.empty();
+        this.addMany.apply(this, arguments); // pass *arguments* through to addmany funciton
+    },
 
-        empty: function () {
-            this.length = 0;
-            this.firstnode = null;
-            this.lastnode = null;
-        },
+    empty: function () {
+        this.length = 0;
+        this.firstnode = null;
+        this.lastnode = null;
+    },
 
-        // easy way to iterate the collection - bool callback(data, index)
-        iterate: function (callback) {
-            if (this.length > 0) {
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (callback(node.data, i)) break;
-                    i++;
-                    node = node.nextnode;
-                }
-            }
-        },
-
-        addMany: function() {
-            if (arguments) {
-                for (var i = 0; i < arguments.length; i++) {
-                    this.add(arguments[i]);
-                }
-            }
-        },
-
-        // adds a new item to the end of the list
-        add: function (data) {
-            var node = {};
-            if (this.lastnode)
-                this.lastnode.nextnode = node;
-
-            node.prevnode = this.lastnode;
-            node.nextnode = null;
-            node.data = data;
-
-            if (!this.firstnode)
-                this.firstnode = node;
-
-            this.lastnode = node;
-            this.length++;
-        },
-
-        addAt: function (data, index) {
-            if (index >= 0) {
-
-                if (index >= this.length) {
-                    this.add(data);
-                    return;
-                }
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (i == index) {
-                        var nextnode = node;
-                        node = { data: data };
-                        node.nextnode = nextnode;
-                        node.prevnode = nextnode.prevnode;
-                        if (node.prevnode)
-                            node.prevnode.nextnode = node;
-                        else
-                            this.firstnode = node;
-                        nextnode.prevnode = node;
-                        this.length++;
-                        return;
-                    }
-                    i++;
-                    node = node.nextnode;
-                }
-            }
-
-        },
-
-        // returns an item at the given index
-        at: function (index) {
-            if (index >= 0 && index < this.length) {
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (i == index) return node.data;
-                    i++;
-                    node = node.nextnode;
-                }
-            }
-        },
-
-        first: function () {
-            return this.firstnode ? this.firstnode.data : null;
-        },
-
-        last: function () {
-            return this.lastnode ? this.lastnode.data : null;
-        },
-
-        removeFirst: function () {
-            if (this.firstnode) {
-                if (this.firstnode.nextnode) {
-                    var node = this.firstnode.nextnode;
-                    node.prevnode = null;
-                    this.firstnode = node;
-                }
-            }
-        },
-        removeLast: function () {
-            if (this.lastnode) {
-                if (this.lastnode.prevnode) {
-                    var node = this.lastnode.prevnode;
-                    node.nextnode = null;
-                    this.lastnode = node;
-                }
-            }
-        },
-
-        // removes an item at the given index
-        removeAt: function (index) {
-            if (index >= 0 && index < this.length) {
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (i == index) {
-                        if (node.prevnode)
-                            node.prevnode.nextnode = node.nextnode;
-                        else
-                            this.removeFirst();
-                        if (node.nextnode)
-                            node.nextnode.prevnode = node.prevnode;
-                        else
-                            this.removeLast();
-                        this.length--;
-                        return;
-                    }
-                    i++;
-                    node = node.nextnode;
-                }
-            }
-        },
-
-        // removes an item, returns false if the item was not found
-        remove: function (item) {
-            if (this.length > 0) {
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (ds.object.isEqual(node.data, item)) {
-                        if (node.prevnode)
-                            node.prevnode.nextnode = node.nextnode;
-                        else
-                            this.removeFirst();
-                        if (node.nextnode)
-                            node.nextnode.prevnode = node.prevnode;
-                        else
-                            this.removeLast();
-                        this.length--;
-                        return i;
-                    }
-                    i++;
-                    node = node.nextnode;
-                }
-            }
-            return false;
-        },
-
-        // returns an items index in the collection
-        indexOf: function (item) {
-            if (this.length > 0) {
-                var node = this.firstnode;
-                var i = 0;
-                while (node) {
-                    if (ds.object.isEqual(node.data, item)) {
-                        return i;
-                    }
-                    i++;
-                    node = node.nextnode;
-                }
+    // easy way to iterate the collection - bool callback(data, index)
+    iterate: function (callback) {
+        if (this.length > 0) {
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (callback(node.data, i)) break;
+                i++;
+                node = node.nextnode;
             }
         }
+    },
+
+    addMany: function () {
+        if (arguments) {
+            for (var i = 0; i < arguments.length; i++) {
+                this.add(arguments[i]);
+            }
+        }
+    },
+
+    // adds a new item to the end of the list
+    add: function (data) {
+        var node = {};
+        if (this.lastnode)
+            this.lastnode.nextnode = node;
+
+        node.prevnode = this.lastnode;
+        node.nextnode = null;
+        node.data = data;
+
+        if (!this.firstnode)
+            this.firstnode = node;
+
+        this.lastnode = node;
+        this.length++;
+    },
+
+    addAt: function (data, index) {
+        if (index >= 0) {
+
+            if (index >= this.length-1) {
+                this.add(data);
+                return;
+            }
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (i == index) {
+                    var nextnode = node;
+                    node = { data: data };
+                    node.nextnode = nextnode;
+                    node.prevnode = nextnode.prevnode;
+                    if (node.prevnode)
+                        node.prevnode.nextnode = node;
+                    else
+                        this.firstnode = node;
+                    nextnode.prevnode = node;
+                    this.length++;
+                    return;
+                }
+                i++;
+                node = node.nextnode;
+            }
+        }
+
+    },
+
+    // returns an item at the given index
+    at: function (index) {
+        if (index >= 0 && index < this.length) {
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (i == index) return node.data;
+                i++;
+                node = node.nextnode;
+            }
+        }
+    },
+
+    first: function () {
+        return this.firstnode ? this.firstnode.data : null;
+    },
+
+    last: function () {
+        return this.lastnode ? this.lastnode.data : null;
+    },
+
+    removeFirst: function () {
+        if (this.firstnode) {
+            if (this.firstnode.nextnode) {
+                var node = this.firstnode.nextnode;
+                node.prevnode = null;
+                this.firstnode = node;
+                this.length--;
+            }
+        }
+    },
+    removeLast: function () {
+        if (this.lastnode) {
+            if (this.lastnode.prevnode) {
+                var node = this.lastnode.prevnode;
+                node.nextnode = null;
+                this.lastnode = node;
+                this.length--;
+            }
+        }
+    },
+
+    // removes an item at the given index
+    removeAt: function (index) {
+        if (index >= 0 && index < this.length) {
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (i == index) {
+                    if (node.prevnode) {
+                        node.prevnode.nextnode = node.nextnode;
+                    }
+                    else
+                        this.removeFirst();
+
+                    if (node.nextnode) {
+                        node.nextnode.prevnode = node.prevnode;
+                    }
+                    else
+                        this.removeLast();
+
+                    return;
+                }
+                i++;
+                node = node.nextnode;
+            }
+        }
+    },
+
+    // removes an item, returns false if the item was not found
+    remove: function (item) {
+        if (this.length > 0) {
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (ds.object.isEqual(node.data, item)) {
+                    if (node.prevnode) {
+                        node.prevnode.nextnode = node.nextnode;
+                    }
+                    else
+                        this.removeFirst();
+
+                    if (node.nextnode) {
+                        node.nextnode.prevnode = node.prevnode;
+                    }
+                    else
+                        this.removeLast();
+                    
+                    return i;
+                }
+                i++;
+                node = node.nextnode;
+            }
+        }
+        return false;
+    },
+
+    // returns an items index in the collection
+    indexOf: function (item) {
+        if (this.length > 0) {
+            var node = this.firstnode;
+            var i = 0;
+            while (node) {
+                if (ds.object.isEqual(node.data, item)) {
+                    return i;
+                }
+                i++;
+                node = node.nextnode;
+            }
+        }
+    }
 });
 
 // implements stack LIFO
@@ -286,6 +302,7 @@ ds.data.stack= ds.make.class({
     implements:  ds.interfaces.queue,
     inherits: [ds.data.enumerable, ds.data.list],
     constructor: function () {
+        this.enumerable();
         this.empty();
         this.addMany.apply(this,arguments); // pass *arguments* through to addmany funciton    
     },
@@ -305,24 +322,25 @@ ds.data.stack= ds.make.class({
 });
 
 // implements queue FIFO
-ds.data.queue= ds.make.class({
+ds.data.queue = ds.make.class({
     type: 'Queue',
     implements: ds.interfaces.queue,
     inherits: [ds.data.enumerable, ds.data.list],
     constructor: function () {
+        this.enumerable();
         this.empty();
-        this.addMany.apply(this,arguments); // pass *arguments* through to addmany funciton    
+        this.addMany.apply(this, arguments); // pass *arguments* through to addmany funciton    
     },
 
-    enqueue: function( item ){
+    enqueue: function (item) {
         return this.add(item);
     },
-    dequeue: function() {
+    dequeue: function () {
         var node = this.firstnode.data;
         this.removeFirst();
         return node;
     },
-    peek: function() {
+    peek: function () {
         var node = this.firstnode.data;
         return node;
     }
@@ -336,6 +354,7 @@ ds.data.tree = ds.make.class({
     implements: ds.interfaces.enumerable,
     inherits: ds.data.enumerable,
     constructor: function (object) {
+        this.enumerable();
         this.root = object;
         this.leaf = [];
         var length = 0;

@@ -83,6 +83,23 @@ ds.data.copy = function (src, dest, ignore, addonly) {
     return dest;
 };
 
+ds.make.namespace = function (nsstr, code) {
+    var t = nsstr.split('.');
+    if (t.length == 1) {
+        window[t[0]] = window[t[0]] || code;
+        return;
+    }
+    else {
+        var obj = window[t[0]] = window[t[0]] || {};
+        for (var i = 1; i < t.length - 1; i++) {
+            obj[t[i]] = obj[t[i]] || {};
+            obj = obj[t[i]];
+        }
+        obj[t[i]] = obj[t[i]] || code;
+        return code;
+    }
+};
+
 ds.make.class = function (details) {
     /// <summary>
     /// Used to create a class object with a ds.constructor.
@@ -139,6 +156,7 @@ ds.make.class = function (details) {
 
     // inject constructor
     details.constructor.prototype = details;
+    ds.make.namespace(details.type, details.constructor);
     return details.constructor;
 };
 

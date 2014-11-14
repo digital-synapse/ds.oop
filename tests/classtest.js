@@ -217,7 +217,7 @@ var list = new ds.data.list(1, 2, 3);
 logtest('new list()', list.toArray().join(), '1,2,3');
 
 list.empty();
-logtest('list.empty()', list.count(), 0);
+logtest('list.empty()', list.count, 0);
 
 list.add(1);
 list.add(2);
@@ -272,7 +272,7 @@ var dict = new ds.data.dictionary({
 logtest('new dictionary()', dict.toArray().join(), '1,2,3');
 
 dict.empty();
-logtest('dictionary.empty()', dict.count(), 0);
+logtest('dictionary.empty()', dict.count, 0);
 
 dict.add(1, 3);
 dict.add(2, 2);
@@ -305,7 +305,7 @@ var peek = stack.peek();
 logtest('stack.peek()', peek, 3);
 
 stack.empty();
-logtest('stack.empty()', stack.count(), 0);
+logtest('stack.empty()', stack.count, 0);
 
 console.log('\n--- QUEUE TESTS ----');
 
@@ -321,7 +321,7 @@ var peek = queue.peek();
 logtest('queue.peek()', peek, 2);
 
 queue.empty();
-logtest('queue.empty()', queue.count(), 0);
+logtest('queue.empty()', queue.count, 0);
 
 
 console.log('\n--- TREE TESTS ----');
@@ -346,10 +346,10 @@ var tree = new ds.data.tree({
     }]
 });
 
-logtest('new tree()', tree.root && tree.leaf && tree.count() > 0, true);
+logtest('new tree()', tree.root && tree.leaf && tree.count > 0, true);
 
-var count = tree.count();
-logtest('tree.count()', count, 7);
+var count = tree.count;
+logtest('tree.count', count, 7);
 
 
 var names = ds.array.select(tree.toArray(), 'name').join();
