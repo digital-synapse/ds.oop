@@ -14,7 +14,7 @@ If you like this project send me an email:
 To get started include ds.oop.min.js
 Creating a class is simple. Here are the minimal requirements to define a class:
 
-	var MyClass = ds.make.class({
+	ds.make.class({
 	    type: 'MyClass',              /* The type name - always required */
 	    constructor: function () { }  /* The constructor - always required */
 	});
