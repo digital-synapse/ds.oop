@@ -16,10 +16,9 @@ Creating a class is simple. Here are the minimal requirements to define a class:
 
 	ds.make.class({
 	    type: 'MyClass',              /* The type name - always required */
-	    constructor: function () { }  /* The constructor - always required */
 	});
 
-Thats it. just a constructor function and a type string. To create class member variables just use the this *  keyword inside of a class function.
+Thats it. just a type string. To create class member variables just use the this *  keyword inside of a class function. Here is how you define a constructor:
 
 	var Color = ds.make.class({
 	    type: 'Color',

@@ -155,9 +155,13 @@ ds.make.class = function (details) {
     }
 
     // inject constructor
-    details.constructor.prototype = details;
-    ds.make.namespace(details.type, details.constructor);
-    return details.constructor;
+    if (details.constructor && typeof details.constructor == 'function') {
+        if (details.constructor.toString().indexOf('function Object()') != -1)  
+            details.constructor = function () { };
+        details.constructor.prototype = details;
+        ds.make.namespace(details.type, details.constructor);
+        return details.constructor;
+    }
 };
 
 ds.make.enum = function (object) {
