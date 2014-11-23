@@ -1,7 +1,7 @@
 ﻿/// <reference path="/@JSense.js" />
 var ds = ds || {};
 
-ds.get_type = function (thing) {
+ds.type = function (thing) {
     /// <summary>
     /// Attempts to get the class type of the object 
     /// </summary>
@@ -14,10 +14,16 @@ ds.get_type = function (thing) {
         return "[object Null]"; // special case
     }
     var t = thing.__proto__.type;
-    return t ? t : Object.prototype.toString.call(thing); //.slice(8,-1);
+
+    if (!this.prototype) {
+        return t ? t : Object.prototype.toString.call(thing); //.slice(8,-1);
+    } else {
+        var tt = thing.prototype.type;
+        return t ? t : (tt ? tt : Object.prototype.toString.call(thing));
+    }
 };
 
-ds.type = ds.make.enum({
+TYPE = ds.make.enum({
     Null: '[object Null]',
     Object: '[object Object]',
     Array: '[object Array]',
@@ -25,13 +31,13 @@ ds.type = ds.make.enum({
 });
 
 ds.isNull= function(o) {
-    return ds.get_type(o) == ds.type.Null;
+    return ds.type(o) == TYPE.Null;
 };
 ds.isArray= function(o) {
-    return ds.get_type(o) == ds.type.Array;
+    return ds.type(o) == TYPE.Array;
 };
 ds.isObject= function(o) {
-    return ds.get_type(o) == ds.type.Object;
+    return ds.type(o) == TYPE.Object;
 };
 
 

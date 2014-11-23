@@ -4,6 +4,7 @@ ds.array = ds.array || {};
 ds.object = ds.object || {};
 ds.data = ds.data || {};
 ds.make = ds.make || {};
+ds.make.static = ds.make.static || {};
 
 ds.str = {
     funct: 'function',
@@ -100,7 +101,25 @@ ds.make.namespace = function (nsstr, code) {
     }
 };
 
-ds.make.class = function (details) {
+ds.make.enum = function (object) {
+    /// <summary>
+    /// Used to create an enum object.
+    /// The resulting object can be used as both an enumerator and a lookup table
+    /// ex:  Colors.Red returns 'FF0000', Colors['FF0000'] returns 'Red'
+    /// </summary>
+    /// <param name="object">A simple property object ex: { Red: 'FF0000', Green: '00FF00', Blue: '0000FF' }</param>
+    /// <returns type="">(ENUM) the enumerator</returns>
+    var lut = {};
+    var keys = Object.keys(object);
+    for (var i = 0; i < keys.length; i++) {
+        var prop = object[keys[i]];
+        lut[keys[i]] = prop;
+        lut[prop] = keys[i];
+    }
+    return lut;
+};
+
+ds.make.class = function (details, isStatic) {
     /// <summary>
     /// Used to create a class object with a ds.constructor.
     /// </summary>
@@ -156,28 +175,17 @@ ds.make.class = function (details) {
 
     // inject constructor
     if (details.constructor && typeof details.constructor == 'function') {
-        if (details.constructor.toString().indexOf('function Object()') != -1)  
+        if (details.constructor.toString().indexOf('function Object()') != -1)
             details.constructor = function () { };
         details.constructor.prototype = details;
-        ds.make.namespace(details.type, details.constructor);
-        return details.constructor;
+        var rtn;
+        if (isStatic) rtn = new (details.constructor)();
+        else rtn = details.constructor;
+        ds.make.namespace(details.type, rtn);
+        return rtn;
     }
 };
 
-ds.make.enum = function (object) {
-    /// <summary>
-    /// Used to create an enum object.
-    /// The resulting object can be used as both an enumerator and a lookup table
-    /// ex:  Colors.Red returns 'FF0000', Colors['FF0000'] returns 'Red'
-    /// </summary>
-    /// <param name="object">A simple property object ex: { Red: 'FF0000', Green: '00FF00', Blue: '0000FF' }</param>
-    /// <returns type="">(ENUM) the enumerator</returns>
-    var lut = {};
-    var keys = Object.keys(object);
-    for (var i = 0; i < keys.length; i++) {
-        var prop = object[keys[i]];
-        lut[keys[i]] = prop;
-        lut[prop] = keys[i];
-    }
-    return lut;
+ds.make.static.class = function (details) {
+    ds.make.class(details, true);
 };

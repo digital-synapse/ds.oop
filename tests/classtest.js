@@ -210,6 +210,30 @@ catch (e) {
 logtest('class test (multiple interfaces)', expected, true);
 
 
+ds.make.class({
+    type: 'ConstructorlessClass',
+    pow2: function (x) { return x * x; }
+});
+var noconst = new ConstructorlessClass();
+logtest('class test (constructorless class)', noconst.pow2(5) == 25, true);
+
+ds.make.static.class({
+    type: 'Test.StaticClass',
+    constructor: function () {
+        this.x = 5;
+    }
+});
+logtest('class test (static class)', Test.StaticClass.x == 5, true);
+
+
+logtest('class test (get type)',
+    ds.type(Test.StaticClass) == 'Test.StaticClass' &&
+    ds.type(noconst) == 'ConstructorlessClass' &&
+    ds.type({}) == TYPE.Object &&
+    ds.type([]) == TYPE.Array && 
+    ds.type(function() {}) == TYPE.Function, true);
+
+
 console.log('\n--- LIST TESTS ----');
 
 var list = new ds.data.list(1, 2, 3);
@@ -355,12 +379,3 @@ logtest('tree.count', count, 7);
 var names = ds.array.select(tree.toArray(), 'name').join();
 logtest('tree.toArray()', names, "leaf1,child1,leaf2,child2,leaf3,child3,root");
 
-
-console.log('\n--- CONSTRUCTORLESS CLASS TEST ---');
-ds.make.class({
-    type: 'ConstructorlessClass',
-    pow2: function (x) { return x * x; }
-});
-var noconst = new ConstructorlessClass();
-
-logtest('Constructorless test', noconst.pow2(5)==25, true);

@@ -59,7 +59,7 @@ ds.forx = function (object, callback, childname) {
         else _forxslow(root, callback, 0, null);
     };
 
-    if (ds.get_type(object) == 'Tree')
+    if (ds.type(object) == 'Tree')
         start(object.root);
     else {
         if (ds.isObject(object) || ds.isArray(object)) {

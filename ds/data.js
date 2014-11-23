@@ -370,7 +370,6 @@ ds.data.tree = ds.make.class({
         // find an array so we know the name of the child        
         var keys = Object.keys(this.root);
         for (var i = 0; i < keys.length; i++) {
-            ds.type
             if (ds.isArray(this.root[keys[i]])) {
                 this.recurseOn = keys[i];
                 break;
