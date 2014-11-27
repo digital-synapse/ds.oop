@@ -76,6 +76,8 @@ ds.data.copy = function (src, dest, ignore, addonly) {
                     dest[attr] = src[attr];
                 else if (src[attr] == src)
                     dest[attr] = src;
+                else if (src[attr].constructor === Number || src[attr].constructor === String || src[attr].constructor === Boolean)
+                    dest[attr] = src[attr];
                 else
                     dest[attr] = ds.data.copy(src[attr]);
             }
@@ -142,20 +144,18 @@ ds.make.class = function (details, isStatic) {
                 implementstype = [];
                 for (var x = 0; x < details.inherits.length; x++)
                     implementstype.push(inherit(details.inherits[x].prototype));
-            }
-            else
+            } else
                 implementstype = inherit(details.inherits.prototype);
 
             details.inherits = implementstype;
-        }
-        catch (e) {
+        } catch (e) {
             throw "ERROR: Unable to inherit classes in " + details.type +
                 ". Make sure your have created the class with ds.make.class() before attempting to inherit it!";
         }
     }
 
     // implements?
-    var _implements = details['implements'];  // apparently implements is a keyword. stupid ecma standards...
+    var _implements = details['implements']; // apparently implements is a keyword. stupid ecma standards...
     if (_implements) {
         if (!(_implements instanceof Array)) _implements = [_implements];
         for (var z = 0; z < _implements.length; z++) {
@@ -173,17 +173,30 @@ ds.make.class = function (details, isStatic) {
         _implements = Object.keys(_implements);
     }
 
-    // inject constructor
-    if (details.constructor && typeof details.constructor == 'function') {
-        if (details.constructor.toString().indexOf('function Object()') != -1)
-            details.constructor = function () { };
-        details.constructor.prototype = details;
-        var rtn;
-        if (isStatic) rtn = new (details.constructor)();
-        else rtn = details.constructor;
-        ds.make.namespace(details.type, rtn);
-        return rtn;
+    // public?
+    var properties;
+    if (details.properties) {
+        properties = details.properties;
+        delete details.properties;
     }
+    // inject constructor    
+    if (details.constructor.toString().indexOf('function Object()') != -1)
+        details.constructor = function () {
+            if (properties) ds.data.copy(properties, this);
+        };
+    else {
+        details._constructor = details.constructor;
+        details.constructor = function () {
+            if (properties) ds.data.copy(properties, this);
+            this._constructor.apply(this, arguments);
+        };
+    }
+    details.constructor.prototype = details;
+    var rtn;
+    if (isStatic) rtn = new (details.constructor)();
+    else rtn = details.constructor;
+    ds.make.namespace(details.type, rtn);
+    return rtn;
 };
 
 ds.make.static.class = function (details) {

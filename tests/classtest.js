@@ -226,6 +226,28 @@ ds.make.static.class({
 logtest('class test (static class)', Test.StaticClass.x == 5, true);
 
 
+ds.make.class({
+    type: 'Test.PublicMembers',
+    properties: {
+        x: 0,
+        y: 1,
+        z: 2,
+        o: { o2: { o3: { o4: 5}} }
+    },
+    constructor: function () {
+        var prv = { zz: 1, yy: 2, xx: 3 };
+        this.service = function () {
+            return prv.yy;
+        };
+    }
+});
+var contaminate = new Test.PublicMembers();
+contaminate.x = 23987;
+contaminate.o = '?';
+var testPublicMembers = new Test.PublicMembers();
+logtest('class test (public members)', testPublicMembers.y == 1 && testPublicMembers.z == 2 && testPublicMembers.x == 0 && testPublicMembers.o.o2.o3.o4 == 5, true);
+logtest('class test (private members)', !testPublicMembers.prv && testPublicMembers.service() == 2, true);
+
 logtest('class test (get type)',
     ds.type(Test.StaticClass) == 'Test.StaticClass' &&
     ds.type(noconst) == 'ConstructorlessClass' &&
