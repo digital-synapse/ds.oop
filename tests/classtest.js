@@ -248,6 +248,14 @@ var testPublicMembers = new Test.PublicMembers();
 logtest('class test (public members)', testPublicMembers.y == 1 && testPublicMembers.z == 2 && testPublicMembers.x == 0 && testPublicMembers.o.o2.o3.o4 == 5, true);
 logtest('class test (private members)', !testPublicMembers.prv && testPublicMembers.service() == 2, true);
 
+ds.make.class({
+    type: 'Test.InheritProperties',
+    inherits: Test.PublicMembers
+});
+var inheritProps = new Test.InheritProperties();
+logtest('class test (property inheritance)', inheritProps.y == 1 && inheritProps.z == 2 && inheritProps.x == 0 && inheritProps.o.o2.o3.o4 == 5, true);
+
+
 logtest('class test (get type)',
     ds.type(Test.StaticClass) == 'Test.StaticClass' &&
     ds.type(noconst) == 'ConstructorlessClass' &&

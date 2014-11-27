@@ -177,7 +177,7 @@ ds.make.class = function (details, isStatic) {
     var properties;
     if (details.properties) {
         properties = details.properties;
-        delete details.properties;
+        //delete details.properties;
     }
     // inject constructor    
     if (details.constructor.toString().indexOf('function Object()') != -1)
