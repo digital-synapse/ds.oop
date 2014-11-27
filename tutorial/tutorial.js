@@ -1,12 +1,12 @@
 ﻿
-    ds.make.static.class({
-        type: 'string',
-        compare: function (a, b) {
-            if (a.toString() < b.toString()) return -1;
-            if (a.toString() > b.toString()) return 1;
-            return 0;
-        }
-    });
+ds.make.static.class({
+    type: 'string',
+    compare: function (a, b) {
+        if (a.toString() < b.toString()) return -1;
+        if (a.toString() > b.toString()) return 1;
+        return 0;
+    }
+});
 
     ds.make.class({
         type: 'ArrayUtils.BinarySearch',
@@ -28,7 +28,7 @@
                 if (cmp == 0) return index;
 
                 length = Math.ceil(length * 0.5);
-                var half = Math.ceil(length * 0.5);
+                var half = Math.floor(length * 0.5);
                 index = index + (half * cmp);
             }
             return -1;
@@ -64,4 +64,4 @@
     new_time = (new Date()).getTime();
     var seconds_passed_binary_search = (new_time - old_time)/1000;
 
-    console.log(iterations + ' iterations\nindexOf:\t\t' + seconds_passed_indexOf + '\nbinary search:\t\t' + seconds_passed_binary_search)
+    console.log(iterations + ' iterations\nindexOf:\t\t' + seconds_passed_indexOf + ' seconds\nbinary search:\t\t' + seconds_passed_binary_search+ ' seconds')
