@@ -63,7 +63,7 @@ ds.data.copy = function (src, dest, ignore, addonly) {
     /// <param name="ignore">(Array) - a blacklist of property names/indexes that will not be copied</param>
     /// <param name="addonly">(Bool) - will copy properties/indexes that do not exist in dest</param>
     /// <returns type=""></returns>
-    if (!addonly) addonly = true;
+    if (typeof addonly === "undefined") addonly = true;
     if (!dest) dest = src instanceof Array ? [] : {};
     for (var attr in src) {
         var docopy = true;
@@ -127,7 +127,7 @@ ds.make.class = function (details, isStatic) {
     /// </summary>
     /// <param name="details">(OBJECT) The class definition object. requires a ds.constructor function and a type string.</param>
     /// <returns type="">(CLASS) the class</returns>
-    if (!details.type) throw ds.str.typeRequired;
+    //if (!details.type) throw ds.str.typeRequired;
 
     var inherit = function (ptype) {
         var implementstype = ptype.type;
@@ -195,7 +195,7 @@ ds.make.class = function (details, isStatic) {
     var rtn;
     if (isStatic) rtn = new (details.constructor)();
     else rtn = details.constructor;
-    ds.make.namespace(details.type, rtn);
+    if (details.type) ds.make.namespace(details.type, rtn);
     return rtn;
 };
 
