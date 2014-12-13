@@ -233,20 +233,34 @@ ds.make.class({
         y: 1,
         z: 2,
         o: { o2: { o3: { o4: 5}} }
-    },
-    constructor: function () {
-        var prv = { zz: 1, yy: 2, xx: 3 };
-        this.service = function () {
-            return prv.yy;
-        };
     }
 });
-var contaminate = new Test.PublicMembers();
-contaminate.x = 23987;
-contaminate.o = '?';
 var testPublicMembers = new Test.PublicMembers();
-logtest('class test (public members)', testPublicMembers.y == 1 && testPublicMembers.z == 2 && testPublicMembers.x == 0 && testPublicMembers.o.o2.o3.o4 == 5, true);
-logtest('class test (private members)', !testPublicMembers.prv && testPublicMembers.service() == 2, true);
+
+
+ds.make.class({
+    type: 'PrivateTest',
+    public: { a: 1, b: 2, c: 3 },
+    private: { x: 1, y: 2, z: 3 },
+
+    log: function () {
+        console.log(
+            'x: ' + this.x +
+            ' y: ' + this.y +
+            ' z: ' + this.z);
+
+        this.prv();
+    }
+});
+
+var test = new PrivateTest();
+
+logtest('class test (public members)', testPublicMembers.y == 1 && testPublicMembers.z == 2 && testPublicMembers.x == 0 && testPublicMembers.o.o2.o3.o4 == 5 &&
+    test.a==1 && test.b==2 && test.c==3, true);
+
+logtest('class test (private members)', JSON.stringify(test) == '{"a":1,"b":2,"c":3}', true);
+
+
 
 ds.make.class({
     type: 'Test.InheritProperties',
@@ -262,6 +276,8 @@ logtest('class test (get type)',
     ds.type({}) == TYPE.Object &&
     ds.type([]) == TYPE.Array && 
     ds.type(function() {}) == TYPE.Function, true);
+
+
 
 
 console.log('\n--- LIST TESTS ----');

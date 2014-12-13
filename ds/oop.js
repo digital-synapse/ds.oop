@@ -54,7 +54,7 @@ ds.array.diff = function (a1, a2) {
     return a1.filter(function (i) { return a2.indexOf(i) < 0; });
 };
 
-ds.data.copy = function (src, dest, ignore, addonly) {
+ds.data.copy = function (src, dest, ignore, addonly, enumerable) {
     /// <summary>
     /// Used to deep clone an object or array
     /// </summary>
@@ -64,6 +64,7 @@ ds.data.copy = function (src, dest, ignore, addonly) {
     /// <param name="addonly">(Bool) - will copy properties/indexes that do not exist in dest</param>
     /// <returns type=""></returns>
     if (typeof addonly === "undefined") addonly = true;
+    if (typeof enumerable === 'undefined') enumerable = true;
     if (!dest) dest = src instanceof Array ? [] : {};
     for (var attr in src) {
         var docopy = true;
@@ -71,16 +72,24 @@ ds.data.copy = function (src, dest, ignore, addonly) {
             if (ignore.indexOf(attr) != -1) docopy = false;
         }
         if (docopy) {
-            if ((addonly && !dest[attr]) || !addonly) {
-                if (typeof src[attr] == ds.str.funct)
-                    dest[attr] = src[attr];
-                else if (src[attr] == src)
-                    dest[attr] = src;
-                else if (src[attr].constructor === Number || src[attr].constructor === String || src[attr].constructor === Boolean)
-                    dest[attr] = src[attr];
-                else
-                    dest[attr] = ds.data.copy(src[attr]);
-            }
+            if (!enumerable) {
+                Object.defineProperty(dest, attr, {
+                    enumerable: false,
+                    writable: true
+                });
+                
+            } 
+                if ((addonly && !dest[attr]) || !addonly) {
+                    if (typeof src[attr] == ds.str.funct)
+                        dest[attr] = src[attr];
+                    else if (src[attr] == src)
+                        dest[attr] = src;
+                    else if (src[attr].constructor === Number || src[attr].constructor === String || src[attr].constructor === Boolean)
+                        dest[attr] = src[attr];
+                    else
+                        dest[attr] = ds.data.copy(src[attr]);
+                }
+            
         }
     }
     return dest;
@@ -120,6 +129,38 @@ ds.make.enum = function (object) {
     }
     return lut;
 };
+
+/*
+ds.make.proxy = function (subject) {
+        var proxy = {};
+        Object.getOwnPropertyNames(subject).forEach(function (name) {
+            if (name.substring(0, 1) != '_') {
+                if (subject[name] instanceof Function) {
+                    Object.defineProperty(proxy, name, {
+                        get: function () {
+                            return subject[name];
+                        }
+                    });
+                } else {
+                    Object.defineProperty(proxy, name, {
+                        get: function () {
+                            return subject[name];
+                        },
+                        set: function (value) {
+                            subject[name] = value;
+                        }
+                    });
+                }
+            }
+        });
+        return proxy;
+};
+
+ds.make.newinstance = function(cls) {
+    return ds.make.proxy(new cls());
+};
+*/
+
 
 ds.make.class = function (details, isStatic) {
     /// <summary>
@@ -173,21 +214,26 @@ ds.make.class = function (details, isStatic) {
         _implements = Object.keys(_implements);
     }
 
-    // public?
-    var properties;
-    if (details.properties) {
-        properties = details.properties;
-        //delete details.properties;
-    }
-    // inject constructor    
-    if (details.constructor.toString().indexOf('function Object()') != -1)
+    // tmp
+    var properties = details.properties;
+    var public = details.public;
+    var private = details.private;
+
+    // NO CONSTRUCTOR
+    if (details.constructor.toString().indexOf('function Object()') != -1) {
         details.constructor = function () {
             if (properties) ds.data.copy(properties, this);
+            if (public) ds.data.copy(public, this);
+            if (private) ds.data.copy(private, this, false, false, false);
         };
+    }
+    // HAS CONSTRUCTOR
     else {
         details._constructor = details.constructor;
         details.constructor = function () {
             if (properties) ds.data.copy(properties, this);
+            if (public) ds.data.copy(public, this);
+            if (private) ds.data.copy(private, this, false, false, false);
             this._constructor.apply(this, arguments);
         };
     }
