@@ -216,15 +216,15 @@ ds.make.class = function (details, isStatic) {
 
     // tmp
     var properties = details.properties;
-    var public = details.public;
-    var private = details.private;
+    var _public = details.public;
+    var _private = details.private;
 
     // NO CONSTRUCTOR
     if (details.constructor.toString().indexOf('function Object()') != -1) {
         details.constructor = function () {
             if (properties) ds.data.copy(properties, this);
-            if (public) ds.data.copy(public, this);
-            if (private) ds.data.copy(private, this, false, false, false);
+            if (_public) ds.data.copy(_public, this);
+            if (_private) ds.data.copy(_private, this, false, false, false);
         };
     }
     // HAS CONSTRUCTOR
@@ -232,8 +232,8 @@ ds.make.class = function (details, isStatic) {
         details._constructor = details.constructor;
         details.constructor = function () {
             if (properties) ds.data.copy(properties, this);
-            if (public) ds.data.copy(public, this);
-            if (private) ds.data.copy(private, this, false, false, false);
+            if (_public) ds.data.copy(_public, this);
+            if (_private) ds.data.copy(_private, this, false, false, false);
             this._constructor.apply(this, arguments);
         };
     }
