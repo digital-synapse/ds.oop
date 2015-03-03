@@ -1,4 +1,4 @@
-﻿name:	    ds.oop.min.js		
+﻿name:	    ds.min.js		
 version:    0.2a
 date:	    02/28/2015	
 author:     digital-synapse
