@@ -3,7 +3,7 @@ version:    0.2a
 date:	    02/28/2015	
 author:     digital-synapse
 
- A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Also very small at only 3 kb for the minified version. (compare that to prototypejs minified 93.38 kb)
+ A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Provides scope isolation via dependency injection in modules, controllers, and factories. Also very small at only 3 kb for the minified version. (compare that to prototypejs minified 93.38 kb)
 
 .: Getting Started :.
 
