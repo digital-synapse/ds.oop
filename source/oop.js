@@ -5,7 +5,8 @@
     ds['object'] = ds['object'] || {};
     ds['make'] = ds['make'] || {};
     ds['make']['static'] = ds['make']['static'] || {};
-
+    ds['static'] = ds['static'] || {};
+    
     var str = {
         funct: 'function',
         typeRequired: 'The type property is required',
@@ -36,7 +37,8 @@
         return a1.filter(function (i) { return a2.indexOf(i) < 0; });
     };
 
-    var objectCopy = ds['object']['copy'] = function (src, dest, ignore, addonly, enumerable) {
+    var objectCopy = ds['object']['copy'] = ds['copy'] = 
+        function (src, dest, ignore, addonly, enumerable) {
         /// <summary>
         /// Used to deep clone an object or array
         /// </summary>
@@ -95,7 +97,7 @@
     };
     */
 
-    ds['make']['enum'] = function (object) {
+    ds['make']['enum'] = ds['enum'] = function (object) {
         /// <summary>
         /// Used to create an enum object.
         /// The resulting object can be used as both an enumerator and a lookup table
@@ -145,92 +147,94 @@
     */
 
 
-    var makeClass = ds['make']['class'] = function (details, isStatic) {
-        /// <summary>
-        /// Used to create a class object with a ds.constructor.
-        /// </summary>
-        /// <param name="details">(OBJECT) The class definition object. requires a ds.constructor function and a type string.</param>
-        /// <returns type="">(CLASS) the class</returns>
-        //if (!details.type) throw str.typeRequired;
+    var makeClass = ds['make']['class'] = ds['class'] =
+        function (details, isStatic) {
+            /// <summary>
+            /// Used to create a class object with a ds.constructor.
+            /// </summary>
+            /// <param name="details">(OBJECT) The class definition object. requires a ds.constructor function and a type string.</param>
+            /// <returns type="">(CLASS) the class</returns>
+            //if (!details.type) throw str.typeRequired;
 
-        var inherit = function (ptype) {
-            var implementstype = ptype.type;
-            objectCopy(ptype, details, [str.type, str.constructor], true);
-            return implementstype;
-        };
+            var inherit = function (ptype) {
+                var implementstype = ptype.type;
+                objectCopy(ptype, details, [str.type, str.constructor], true);
+                return implementstype;
+            };
 
-        // inherits?
-        var inherits = details['inherits'];
-        if (inherits) {
-            try {
-                // support multiple inheritance with array
-                var implementstype;
-                if (inherits instanceof Array) {
-                    implementstype = [];
-                    for (var x = 0; x < inherits.length; x++)
-                        implementstype.push(inherit(inherits[x].prototype));
-                } else
-                    implementstype = inherit(inherits.prototype);
+            // inherits?
+            var inherits = details['inherits'];
+            if (inherits) {
+                try {
+                    // support multiple inheritance with array
+                    var implementstype;
+                    if (inherits instanceof Array) {
+                        implementstype = [];
+                        for (var x = 0; x < inherits.length; x++)
+                            implementstype.push(inherit(inherits[x].prototype));
+                    } else
+                        implementstype = inherit(inherits.prototype);
 
-                inherits = implementstype;
-            } catch (e) {
-                throw "ERROR: Unable to inherit classes in " + details.type +
+                    inherits = implementstype;
+                } catch (e) {
+                    throw "ERROR: Unable to inherit classes in " + details.type +
                     ". Make sure your have created the class with ds.make.class() before attempting to inherit it!";
-            }
-        }
-
-        // implements?
-        var _implements = details['implements']; // apparently implements is a keyword. stupid ecma standards...
-        if (_implements) {
-            if (!(_implements instanceof Array)) _implements = [_implements];
-            for (var z = 0; z < _implements.length; z++) {
-                var i = getMethodString(_implements[z], true);
-                var o = getMethodString(details, true);
-                var d = arrayDiff(i, o);
-                if (d.length > 0) {
-                    var m = getMethodString(_implements[z]);
-                    for (var x = 0; x < d.length; x++) {
-                        d[x] = m[d[x].substring(0, d[x].indexOf(str.colon))];
-                    }
-                    throw str.sigNotImplementedIn + details.type + str.newline + d.join(str.newline);
                 }
             }
-            _implements = Object.keys(_implements);
-        }
 
-        // tmp
-        var properties = details['properties'];
-        var _public = details['public'];
-        var _private = details['private'];
+            // implements?
+            var _implements = details['implements']; // apparently implements is a keyword. stupid ecma standards...
+            if (_implements) {
+                if (!(_implements instanceof Array)) _implements = [_implements];
+                for (var z = 0; z < _implements.length; z++) {
+                    var i = getMethodString(_implements[z], true);
+                    var o = getMethodString(details, true);
+                    var d = arrayDiff(i, o);
+                    if (d.length > 0) {
+                        var m = getMethodString(_implements[z]);
+                        for (var x = 0; x < d.length; x++) {
+                            d[x] = m[d[x].substring(0, d[x].indexOf(str.colon))];
+                        }
+                        throw str.sigNotImplementedIn + details.type + str.newline + d.join(str.newline);
+                    }
+                }
+                _implements = Object.keys(_implements);
+            }
 
-        // NO CONSTRUCTOR
-        if (details.constructor.toString().indexOf('function Object()') != -1) {
-            details.constructor = function () {
-                if (properties) objectCopy(properties, this);
-                if (_public) objectCopy(_public, this);
-                if (_private) objectCopy(_private, this, false, false, false);
-            };
-        }
-        // HAS CONSTRUCTOR
-        else {
-            details._constructor = details.constructor;
-            details.constructor = function () {
-                if (properties) objectCopy(properties, this);
-                if (_public) objectCopy(_public, this);
-                if (_private) objectCopy(_private, this, false, false, false);
-                this._constructor.apply(this, arguments);
-            };
-        }
-        details.constructor.prototype = details;
-        var rtn;
-        if (isStatic) rtn = new (details.constructor)();
-        else rtn = details.constructor;
-        //if (details.type) ds.make.namespace(details.type, rtn);
-        return rtn;
-    };
+            // tmp
+            var properties = details['properties'];
+            var _public = details['public'];
+            var _private = details['private'];
 
-    ds['make']['static']['class'] = function (details) {
-        return makeClass(details, true);
-    };
+            // NO CONSTRUCTOR
+            if (details.constructor.toString().indexOf('function Object()') != -1) {
+                details.constructor = function () {
+                    if (properties) objectCopy(properties, this);
+                    if (_public) objectCopy(_public, this);
+                    if (_private) objectCopy(_private, this, false, false, false);
+                };
+            }
+            // HAS CONSTRUCTOR
+            else {
+                details._constructor = details.constructor;
+                details.constructor = function () {
+                    if (properties) objectCopy(properties, this);
+                    if (_public) objectCopy(_public, this);
+                    if (_private) objectCopy(_private, this, false, false, false);
+                    this._constructor.apply(this, arguments);
+                };
+            }
+            details.constructor.prototype = details;
+            var rtn;
+            if (isStatic) rtn = new (details.constructor)();
+            else rtn = details.constructor;
+            //if (details.type) ds.make.namespace(details.type, rtn);
+            return rtn;
+        };
+
+    ds['make']['static']['class'] = ds['static']['class'] =
+        function (details) {
+            return makeClass(details, true);
+        };
 
 })()
