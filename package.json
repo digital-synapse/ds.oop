@@ -1,0 +1,29 @@
+{
+  "name": "ds.oop",
+  "version": "0.2.0",
+  "description": "A very fast class framework. Allows OOP concepts in javascript including classes, inheritance, multi-inheritance, polymophism, interfaces, and enumerators without using TypeScript. Provides scope isolation via dependency injection in modules, controllers, and factories. Also very small at only 3 kb for the minified version. (compare that to prototypejs minified 93.38 kb)",
+  "main": "ds.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digital-synapse/ds.oop.git"
+  },
+  "keywords": [
+    "oop",
+    "js",
+    "class",
+    "javascript",
+    "interface",
+    "enumerator",
+    "inheritance",
+    "polymorphism"
+  ],
+  "author": "Christopher Amos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digital-synapse/ds.oop/issues"
+  },
+  "homepage": "https://github.com/digital-synapse/ds.oop#readme"
+}
